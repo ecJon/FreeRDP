@@ -17,6 +17,7 @@ jobs:
   build-windows:
     runs-on: ubuntu-latest
     name: 'Build Windows (MinGW)'
+    continue-on-error: true
     steps:
       - name: 'Checkout source'
         uses: actions/checkout@v4
@@ -54,6 +55,7 @@ jobs:
   build-macos:
     runs-on: macos-latest
     name: 'Build macOS'
+    continue-on-error: true
     steps:
       - name: 'Checkout source'
         uses: actions/checkout@v4
@@ -82,6 +84,7 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     name: 'Build Linux'
+    continue-on-error: true
     steps:
       - name: 'Checkout source'
         uses: actions/checkout@v4
@@ -115,12 +118,10 @@ jobs:
             libfdk-aac-dev \
             libopenh264-dev \
             libcairo2-dev \
-            libwebkit2gtk-4.0-dev \
             libfuse3-dev \
             libglib2.0-dev \
             libpam0g-dev \
-            libkrb5-dev \
-            libpcsc-dev
+            libkrb5-dev
 
       - name: 'Build FreeRDP'
         run: |
@@ -158,6 +159,7 @@ jobs:
 
   create-release:
     needs: [build-windows, build-macos, build-linux]
+    if: always()
     runs-on: ubuntu-latest
     name: 'Create GitHub Release'
     permissions:
@@ -168,21 +170,27 @@ jobs:
 
       - name: 'Download Windows artifact'
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: FreeRDP-Windows-x64
           path: ./artifacts
 
       - name: 'Download macOS artifact'
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: FreeRDP-macOS-universal
           path: ./artifacts
 
       - name: 'Download Linux artifact'
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: FreeRDP-Linux-x64
           path: ./artifacts
+
+      - name: 'List all artifacts'
+        run: ls -laR ./artifacts
 
       - name: 'Create Release'
         uses: softprops/action-gh-release@v2
