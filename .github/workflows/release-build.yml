@@ -118,6 +118,7 @@ jobs:
             libfdk-aac-dev \
             libopenh264-dev \
             libcairo2-dev \
+            libcups2-dev \
             libfuse3-dev \
             libglib2.0-dev \
             libpam0g-dev \
